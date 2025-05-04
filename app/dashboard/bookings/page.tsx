@@ -1,112 +1,73 @@
-import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { Calendar, Clock, MapPin } from "lucide-react"
+import { Badge } from "@/components/ui/badge"
+import { Calendar, MapPin, Users } from "lucide-react"
+import prisma from "@/lib/db"  // Changed this line
+import { format } from "date-fns"
 
-// Mock data for bookings
-const bookings = [
-  {
-    id: 1,
-    place: "Grand Ballroom",
-    date: "June 15, 2024",
-    time: "6:00 PM - 11:00 PM",
-    status: "Confirmed",
-    guests: 150,
-    type: "Wedding Reception",
-  },
-  {
-    id: 2,
-    place: "Conference Center",
-    date: "July 10, 2024",
-    time: "9:00 AM - 5:00 PM",
-    status: "Pending",
-    guests: 75,
-    type: "Corporate Meeting",
-  },
-  {
-    id: 3,
-    place: "Garden Terrace",
-    date: "August 22, 2024",
-    time: "4:00 PM - 8:00 PM",
-    status: "Confirmed",
-    guests: 100,
-    type: "Birthday Celebration",
-  },
-]
+async function getBookings() {
+  "use server"
+  try {
+    const bookings = await prisma.booking.findMany({
+      include: {
+        place: true
+      },
+      orderBy: {
+        eventDate: 'asc'
+      }
+    })
+    return bookings
+  } catch (error) {
+    console.error('Error fetching bookings:', error)
+    return []
+  }
+}
 
-export default function BookingsPage() {
+export default async function BookingsPage() {
+  const bookings = await getBookings()
+
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Your Bookings</h1>
-          <p className="text-gray-600 mt-1">Manage your upcoming events</p>
-        </div>
-        <Button className="mt-4 md:mt-0">Create New Booking</Button>
+    <div className="space-y-6 p-6">
+      <div className="flex items-center justify-between">
+        <h1 className="text-3xl font-bold">Bookings</h1>
       </div>
 
-      <div className="space-y-4">
+      <div className="grid grid-cols-1 gap-4">
         {bookings.map((booking) => (
-          <Card key={booking.id} className="overflow-hidden">
-            <CardContent className="p-0">
-              <div className="flex flex-col md:flex-row">
-                <div
-                  className={`w-full md:w-2 ${
-                    booking.status === "Confirmed"
-                      ? "bg-green-500"
-                      : booking.status === "Pending"
-                        ? "bg-yellow-500"
-                        : "bg-red-500"
-                  }`}
-                ></div>
-                <div className="p-6 flex-1">
-                  <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-                    <div>
-                      <h2 className="text-xl font-semibold">{booking.type}</h2>
-                      <p className="text-gray-600">{booking.place}</p>
-                    </div>
-                    <div className="mt-4 md:mt-0">
-                      <span
-                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                          booking.status === "Confirmed"
-                            ? "bg-green-100 text-green-800"
-                            : booking.status === "Pending"
-                              ? "bg-yellow-100 text-yellow-800"
-                              : "bg-red-100 text-red-800"
-                        }`}
-                      >
-                        {booking.status}
-                      </span>
-                    </div>
+          <Card key={booking.id}>
+            <CardContent className="p-6">
+              <div className="flex flex-col md:flex-row justify-between gap-4">
+                <div className="space-y-3">
+                  <h2 className="text-xl font-semibold">{booking.eventName}</h2>
+                  <div className="flex items-center gap-2 text-gray-600">
+                    <Calendar className="h-4 w-4" />
+                    {format(new Date(booking.eventDate), 'PPP p')}
                   </div>
-
-                  <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="flex items-center">
-                      <Calendar className="h-5 w-5 text-gray-400 mr-2" />
-                      <span>{booking.date}</span>
-                    </div>
-                    <div className="flex items-center">
-                      <Clock className="h-5 w-5 text-gray-400 mr-2" />
-                      <span>{booking.time}</span>
-                    </div>
-                    <div className="flex items-center">
-                      <MapPin className="h-5 w-5 text-gray-400 mr-2" />
-                      <span>{booking.guests} guests</span>
-                    </div>
+                  <div className="flex items-center gap-2 text-gray-600">
+                    <MapPin className="h-4 w-4" />
+                    {booking.place.name}
                   </div>
-
-                  <div className="mt-6 flex flex-col sm:flex-row gap-3">
-                    <Button variant="outline" size="sm">
-                      View Details
-                    </Button>
-                    <Button variant="outline" size="sm">
-                      Modify Booking
-                    </Button>
-                    {booking.status === "Pending" && (
-                      <Button variant="destructive" size="sm">
-                        Cancel
-                      </Button>
-                    )}
+                  <div className="flex items-center gap-2 text-gray-600">
+                    <Users className="h-4 w-4" />
+                    {booking.guestCount} guests
                   </div>
+                </div>
+                
+                <div className="space-y-3 text-right">
+                  <Badge 
+                    className={
+                      booking.status === 'confirmed' 
+                        ? 'bg-green-100 text-green-800' 
+                        : 'bg-yellow-100 text-yellow-800'
+                    }
+                  >
+                    {booking.status}
+                  </Badge>
+                  <p className="text-2xl font-bold">
+                    ${booking.totalPrice.toLocaleString()}
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    Booked by: {booking.userName}
+                  </p>
                 </div>
               </div>
             </CardContent>

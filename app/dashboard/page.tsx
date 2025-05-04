@@ -2,47 +2,24 @@ import Image from "next/image"
 import Link from "next/link"
 import { Card, CardContent } from "@/components/ui/card"
 import { Calendar, MapPin, MessageSquare } from "lucide-react"
+import { getTopPlaces } from "@/lib/places"
+import { auth } from "@/lib/auth" // You'll need to implement this
 
-// Mock data for places
-const places = [
-  {
-    id: 1,
-    name: "Grand Ballroom",
-    description: "Elegant venue for large gatherings and formal events",
-    image: "/placeholder.svg?height=200&width=300",
-  },
-  {
-    id: 2,
-    name: "Garden Terrace",
-    description: "Beautiful outdoor space perfect for ceremonies and receptions",
-    image: "/placeholder.svg?height=200&width=300",
-  },
-  {
-    id: 3,
-    name: "Conference Center",
-    description: "Professional setting for business meetings and conferences",
-    image: "/placeholder.svg?height=200&width=300",
-  },
-  {
-    id: 4,
-    name: "Beachfront Resort",
-    description: "Stunning coastal location for destination events",
-    image: "/placeholder.svg?height=200&width=300",
-  },
-]
+export default async function Dashboard() {
+  const places = await getTopPlaces(4)
+  const session = await auth() // Get the current user session
 
-export default function Dashboard() {
   return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Welcome back, User!</h1>
+          <h1 className="text-3xl font-bold">Welcome back, {session?.user?.name || 'User'}!</h1>
           <p className="text-gray-600 mt-1">Here's what's happening with your events</p>
         </div>
         <div className="mt-4 md:mt-0 flex items-center space-x-2">
           <div className="relative">
             <Image
-              src="/placeholder.svg?height=40&width=40"
+              src={session?.user?.image || "/placeholder.svg?height=40&width=40"}
               width={40}
               height={40}
               className="rounded-full"
@@ -51,8 +28,8 @@ export default function Dashboard() {
             <span className="absolute bottom-0 right-0 block h-2.5 w-2.5 rounded-full bg-green-400 ring-2 ring-white"></span>
           </div>
           <div>
-            <p className="text-sm font-medium">John Doe</p>
-            <p className="text-xs text-gray-500">john.doe@example.com</p>
+            <p className="text-sm font-medium">{session?.user?.name || 'Guest'}</p>
+            <p className="text-xs text-gray-500">{session?.user?.email}</p>
           </div>
         </div>
       </div>
@@ -109,7 +86,7 @@ export default function Dashboard() {
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
           {places.map((place) => (
             <Link key={place.id} href={`/dashboard/places/${place.id}`}>
               <Card className="overflow-hidden h-full hover:shadow-md transition-shadow">
@@ -123,6 +100,7 @@ export default function Dashboard() {
                 <CardContent className="p-4">
                   <h3 className="font-semibold text-lg">{place.name}</h3>
                   <p className="text-gray-600 text-sm mt-1 line-clamp-2">{place.description}</p>
+                  <p className="text-blue-600 font-semibold mt-2">${place.price.toString()}</p>
                 </CardContent>
               </Card>
             </Link>

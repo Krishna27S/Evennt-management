@@ -1,38 +1,23 @@
 import Image from "next/image"
+import { notFound } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Calendar, Clock, Mail, MapPin, Phone, User } from "lucide-react"
+import { getPlaceById } from "@/lib/places"
+import type { PlaceDetails } from "@/types"
 
-// Mock data for a specific place
-const getPlaceDetails = (id: string) => {
-  return {
-    id: Number.parseInt(id),
-    name: "Grand Ballroom",
-    description:
-      "The Grand Ballroom is an elegant venue perfect for large gatherings and formal events. With its crystal chandeliers, marble floors, and state-of-the-art sound system, it provides a sophisticated backdrop for weddings, galas, and corporate functions. The space can accommodate up to 300 guests for a seated dinner or 500 for a standing reception.",
-    image: "/placeholder.svg?height=400&width=800",
-    date: "Available year-round",
-    capacity: "Up to 300 seated, 500 standing",
-    amenities: ["Stage", "Dance floor", "Full-service bar", "Catering kitchen", "Coat check", "Valet parking"],
-    vendor: {
-      name: "Luxury Events Inc.",
-      serviceType: "Full-service venue management",
-      contact: "Sarah Johnson, Event Director",
-    },
-    contactInfo: {
-      email: "bookings@grandballroom.com",
-      phone: "+1 (555) 123-4567",
-    },
-    timeInfo: {
-      eventTimings: "Available 8:00 AM - 1:00 AM",
-      availability: "Booking 3-18 months in advance recommended",
-    },
-    location: "123 Elegant Avenue, Cityville, State 12345",
-  }
+export async function generateMetadata({ params }: { params: { id: string } }) {
+  const place = await getPlaceById(params.id)
+  if (!place) return { title: 'Place not found' }
+  return { title: place.name }
 }
 
-export default function PlaceDetailsPage({ params }: { params: { id: string } }) {
-  const place = getPlaceDetails(params.id)
+export default async function PlaceDetailsPage({ params }: { params: { id: string } }) {
+  const place = await getPlaceById(params.id)
+
+  if (!place) {
+    notFound()
+  }
 
   return (
     <div className="space-y-8">
@@ -45,7 +30,13 @@ export default function PlaceDetailsPage({ params }: { params: { id: string } })
       </div>
 
       <div className="relative h-64 md:h-96 rounded-xl overflow-hidden">
-        <Image src={place.image || "/placeholder.svg"} fill alt={place.name} className="object-cover" />
+        <Image 
+          src={place.image || "/placeholder.svg"} 
+          fill 
+          alt={place.name} 
+          className="object-cover"
+          priority
+        />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -56,18 +47,17 @@ export default function PlaceDetailsPage({ params }: { params: { id: string } })
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
               <div className="flex items-start">
-                <Calendar className="h-5 w-5 text-blue-600 mt-0.5 mr-2" />
-                <div>
-                  <h3 className="font-medium">Availability</h3>
-                  <p className="text-gray-600">{place.date}</p>
-                </div>
-              </div>
-
-              <div className="flex items-start">
                 <User className="h-5 w-5 text-blue-600 mt-0.5 mr-2" />
                 <div>
                   <h3 className="font-medium">Capacity</h3>
-                  <p className="text-gray-600">{place.capacity}</p>
+                  <p className="text-gray-600">{place.capacity} people</p>
+                </div>
+              </div>
+              <div className="flex items-start">
+                <Calendar className="h-5 w-5 text-blue-600 mt-0.5 mr-2" />
+                <div>
+                  <h3 className="font-medium">Price</h3>
+                  <p className="text-gray-600">${place.price.toLocaleString()}</p>
                 </div>
               </div>
             </div>
