@@ -10,6 +10,7 @@ export async function POST(request: Request) {
         placeId: body.placeId,
         userName: body.name,
         userEmail: body.email,
+        eventName: body.eventName, // Add this required field
         eventDate: new Date(body.date),
         guestCount: parseInt(body.guestCount),
         totalPrice: body.totalPrice,

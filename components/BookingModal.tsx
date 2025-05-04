@@ -13,6 +13,7 @@ export function BookingModal({ show, onClose, place }: BookingModalProps) {
     phone: "",
     date: "",
     guestCount: "1",
+    eventName: "", // Add this field
   })
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -97,6 +98,15 @@ export function BookingModal({ show, onClose, place }: BookingModalProps) {
               max={place.capacity}
               value={formData.guestCount}
               onChange={(e) => setFormData({ ...formData, guestCount: e.target.value })}
+              required
+            />
+          </div>
+          <div>
+            <label htmlFor="eventName">Event Name</label>
+            <Input
+              id="eventName"
+              value={formData.eventName}
+              onChange={(e) => setFormData({ ...formData, eventName: e.target.value })}
               required
             />
           </div>
