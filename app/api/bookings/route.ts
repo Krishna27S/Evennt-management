@@ -1,38 +1,36 @@
-import { NextResponse } from 'next/server'
-import prisma from '@/lib/db'
+import { NextResponse } from "next/server"
+import { prisma } from "@/lib/db"
 
-export async function POST(req: Request) {
+export async function POST(request: Request) {
   try {
-    const data = await req.json()
-    
+    const body = await request.json()
+
     const booking = await prisma.booking.create({
       data: {
-        eventName: `Historical Visit - ${data.name}`,
-        eventDate: new Date(data.eventDate),
-        status: 'pending',
-        placeId: data.placeId,
-        userName: data.name,
-        userEmail: data.email,
-        guestCount: parseInt(data.guestCount),
-        totalPrice: data.totalPrice,
-      }
+        placeId: body.placeId,
+        userName: body.name,
+        userEmail: body.email,
+        eventDate: new Date(body.date),
+        guestCount: parseInt(body.guestCount),
+        totalPrice: body.totalPrice,
+        status: "pending"
+      },
     })
 
-    // Create user info record
     await prisma.userInfo.create({
       data: {
-        name: data.name,
-        email: data.email,
-        phone: data.phone,
+        name: body.name,
+        email: body.email,
+        phone: body.phone,
         bookingId: booking.id
       }
     })
 
-    return NextResponse.json(booking)
+    return NextResponse.json({ success: true, booking })
   } catch (error) {
-    console.error('Booking error:', error)
+    console.error("Booking error:", error)
     return NextResponse.json(
-      { error: 'Failed to create booking' },
+      { error: "Failed to create booking" },
       { status: 500 }
     )
   }

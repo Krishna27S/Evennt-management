@@ -1,55 +1,52 @@
+"use client"
+
+import { useState } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { useState } from "react"
+import { BookingModalProps } from "@/types"
 
-interface BookingModalProps {
-  isOpen: boolean
-  onClose: () => void
-  placeId: number
-  placeName: string
-  price: number
-}
-
-export function BookingModal({ isOpen, onClose, placeId, placeName, price }: BookingModalProps) {
+export function BookingModal({ show, onClose, place }: BookingModalProps) {
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    eventDate: '',
-    guestCount: '',
+    name: "",
+    email: "",
+    phone: "",
+    date: "",
+    guestCount: "1",
   })
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     try {
-      const response = await fetch('/api/bookings', {
-        method: 'POST',
+      const response = await fetch("/api/bookings", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          placeId: place.id,
           ...formData,
-          placeId,
-          totalPrice: price,
+          totalPrice: place.price,
         }),
       })
 
-      if (!response.ok) throw new Error('Booking failed')
-      
+      if (!response.ok) {
+        throw new Error("Failed to create booking")
+      }
+
       onClose()
-      window.location.href = '/dashboard/bookings'
+      window.location.href = "/dashboard/my-bookings"
     } catch (error) {
-      console.error('Booking error:', error)
+      console.error("Booking error:", error)
     }
   }
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={show} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Book {placeName}</DialogTitle>
+          <DialogTitle>Book {place.name}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -57,7 +54,7 @@ export function BookingModal({ isOpen, onClose, placeId, placeName, price }: Boo
             <Input
               id="name"
               value={formData.name}
-              onChange={(e) => setFormData({...formData, name: e.target.value})}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               required
             />
           </div>
@@ -67,7 +64,7 @@ export function BookingModal({ isOpen, onClose, placeId, placeName, price }: Boo
               id="email"
               type="email"
               value={formData.email}
-              onChange={(e) => setFormData({...formData, email: e.target.value})}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
               required
             />
           </div>
@@ -77,17 +74,17 @@ export function BookingModal({ isOpen, onClose, placeId, placeName, price }: Boo
               id="phone"
               type="tel"
               value={formData.phone}
-              onChange={(e) => setFormData({...formData, phone: e.target.value})}
+              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
               required
             />
           </div>
           <div>
-            <label htmlFor="eventDate">Event Date</label>
+            <label htmlFor="date">Event Date</label>
             <Input
-              id="eventDate"
+              id="date"
               type="datetime-local"
-              value={formData.eventDate}
-              onChange={(e) => setFormData({...formData, eventDate: e.target.value})}
+              value={formData.date}
+              onChange={(e) => setFormData({ ...formData, date: e.target.value })}
               required
             />
           </div>
@@ -96,8 +93,10 @@ export function BookingModal({ isOpen, onClose, placeId, placeName, price }: Boo
             <Input
               id="guestCount"
               type="number"
+              min="1"
+              max={place.capacity}
               value={formData.guestCount}
-              onChange={(e) => setFormData({...formData, guestCount: e.target.value})}
+              onChange={(e) => setFormData({ ...formData, guestCount: e.target.value })}
               required
             />
           </div>
@@ -106,7 +105,7 @@ export function BookingModal({ isOpen, onClose, placeId, placeName, price }: Boo
               Cancel
             </Button>
             <Button type="submit">
-              Book Now
+              Confirm Booking
             </Button>
           </div>
         </form>

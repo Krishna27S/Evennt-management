@@ -1,9 +1,21 @@
+export interface Booking {
+  id: number
+  placeId: number
+  userId: string
+  startDate: Date
+  endDate: Date
+  totalPrice: number
+  status: string
+  createdAt: Date
+  updatedAt: Date
+}
+
 export interface Place {
   id: number
   name: string
   description: string
   image: string
-  price: Decimal
+  price: number  // Changed from Decimal to number
   location: string
   capacity: number
   available: boolean
@@ -11,6 +23,12 @@ export interface Place {
   createdAt: Date
   updatedAt: Date
   bookings: Booking[]
+}
+
+export interface BookingModalProps {
+  show: boolean
+  onClose: () => void
+  place: Place
 }
 
 export interface PlaceDetails {

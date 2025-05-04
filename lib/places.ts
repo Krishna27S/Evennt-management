@@ -18,7 +18,12 @@ export async function getPlaceById(id: string | number) {
     })
 
     if (!place) return null
-    return place
+
+    // Convert Decimal to number for serialization
+    return {
+      ...place,
+      price: Number(place.price)
+    }
     
   } catch (error) {
     console.error('Error fetching place:', error)

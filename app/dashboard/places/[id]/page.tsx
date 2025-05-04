@@ -5,6 +5,8 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Calendar, Clock, Mail, MapPin, Phone, User } from "lucide-react"
 import { getPlaceById } from "@/lib/places"
 import { Metadata } from "next"
+import { BookingActions } from "@/components/booking-actions"
+import { Place } from "@/types"
 
 type Props = {
   params: { id: string }
@@ -18,7 +20,7 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
 }
 
 export default async function PlaceDetailsPage(props: Props) {
-  const place = await getPlaceById(props.params.id)
+  const place = await getPlaceById(props.params.id) as unknown as Place
 
   if (!place) {
     notFound()
@@ -104,10 +106,7 @@ export default async function PlaceDetailsPage(props: Props) {
         </Card>
 
         {/* Booking Actions */}
-        <div className="flex flex-col space-y-3">
-          <Button size="lg">Book Now</Button>
-          <Button variant="outline" size="lg">Contact Host</Button>
-        </div>
+        <BookingActions place={place} />
       </div>
     </div>
   )
