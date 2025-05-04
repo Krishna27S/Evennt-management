@@ -8,6 +8,21 @@ generator client {
   output   = "../generated/prisma/client"
 }
 
+model Booking {
+  id          Int      @id @default(autoincrement())
+  eventName   String   @db.VarChar(255)
+  eventDate   DateTime
+  status      String   @default("pending") @db.VarChar(50)
+  placeId     Int
+  place       Place    @relation(fields: [placeId], references: [id])
+  userName    String   @db.VarChar(255)
+  userEmail   String   @db.VarChar(255)
+  guestCount  Int
+  totalPrice  Decimal  @db.Decimal(10, 2)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now()) @updatedAt
+}
+
 model User {
   id        Int      @id @default(autoincrement())
   email     String   @unique @db.VarChar(255)
@@ -30,19 +45,4 @@ model Place {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @default(now()) @updatedAt
   bookings    Booking[]
-}
-
-model Booking {
-  id          Int      @id @default(autoincrement())
-  eventName   String   @db.VarChar(255)
-  eventDate   DateTime
-  status      String   @default("pending") @db.VarChar(50)
-  placeId     Int
-  place       Place    @relation(fields: [placeId], references: [id])
-  userName    String   @db.VarChar(255)
-  userEmail   String   @db.VarChar(255)
-  guestCount  Int
-  totalPrice  Decimal  @db.Decimal(10, 2)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @default(now()) @updatedAt
 }
