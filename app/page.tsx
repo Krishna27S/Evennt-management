@@ -10,7 +10,7 @@ export default function LoginPage() {
       <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-xl shadow-lg">
         <div className="text-center">
           <Image src="/placeholder.svg?height=80&width=80" width={80} height={80} alt="Logo" className="mx-auto" />
-          <h1 className="mt-6 text-3xl font-bold text-gray-900">Event Manager</h1>
+          <h1 className="mt-6 text-3xl font-bold text-gray-900">Historical Explorer</h1>
           <p className="mt-2 text-sm text-gray-600">Sign in to your account</p>
         </div>
 

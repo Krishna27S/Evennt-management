@@ -49,7 +49,7 @@ export default function DashboardLayout({
         <div className="flex flex-col h-full">
           {!isMobile && (
             <div className="px-6 py-6">
-              <h1 className="text-2xl font-bold">Event Manager</h1>
+              <h1 className="text-2xl font-bold">Historical Explorer</h1>
             </div>
           )}
 
