@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Calendar, MapPin, Users } from "lucide-react"
-import prisma from "@/lib/db"  // Changed this line
+import { Calendar, MapPin, Users, Clock, Building } from "lucide-react"
+import prisma from "@/lib/db"
 import { format } from "date-fns"
 
 async function getBookings() {
@@ -28,7 +28,7 @@ export default async function BookingsPage() {
   return (
     <div className="space-y-6 p-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">Bookings</h1>
+        <h1 className="text-3xl font-bold">Historical Event Bookings</h1>
       </div>
 
       <div className="grid grid-cols-1 gap-4">
@@ -37,18 +37,25 @@ export default async function BookingsPage() {
             <CardContent className="p-6">
               <div className="flex flex-col md:flex-row justify-between gap-4">
                 <div className="space-y-3">
-                  <h2 className="text-xl font-semibold">{booking.eventName}</h2>
-                  <div className="flex items-center gap-2 text-gray-600">
-                    <Calendar className="h-4 w-4" />
-                    {format(new Date(booking.eventDate), 'PPP p')}
+                  <div>
+                    <h2 className="text-xl font-semibold">{booking.eventName}</h2>
+                    <p className="text-sm text-gray-500">Historical Experience</p>
                   </div>
                   <div className="flex items-center gap-2 text-gray-600">
-                    <MapPin className="h-4 w-4" />
+                    <Calendar className="h-4 w-4" />
+                    {format(new Date(booking.eventDate), 'PPPP')}
+                  </div>
+                  <div className="flex items-center gap-2 text-gray-600">
+                    <Clock className="h-4 w-4" />
+                    {format(new Date(booking.eventDate), 'p')}
+                  </div>
+                  <div className="flex items-center gap-2 text-gray-600">
+                    <Building className="h-4 w-4" />
                     {booking.place.name}
                   </div>
                   <div className="flex items-center gap-2 text-gray-600">
                     <Users className="h-4 w-4" />
-                    {booking.guestCount} guests
+                    {booking.guestCount} attendees
                   </div>
                 </div>
                 
@@ -66,7 +73,10 @@ export default async function BookingsPage() {
                     ${booking.totalPrice.toLocaleString()}
                   </p>
                   <p className="text-sm text-gray-500">
-                    Booked by: {booking.userName}
+                    Organized by: {booking.userName}
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    {booking.userEmail}
                   </p>
                 </div>
               </div>
