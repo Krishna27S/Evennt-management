@@ -5,22 +5,23 @@ datasource db {
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma/client"
+  output   = "./client"
 }
 
 model Booking {
-  id          Int      @id @default(autoincrement())
-  eventName   String   @db.VarChar(255)
-  eventDate   DateTime
-  status      String   @default("pending") @db.VarChar(50)
-  placeId     Int
-  place       Place    @relation(fields: [placeId], references: [id])
-  userName    String   @db.VarChar(255)
-  userEmail   String   @db.VarChar(255)
-  guestCount  Int
-  totalPrice  Decimal  @db.Decimal(10, 2)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @default(now()) @updatedAt
+  id         Int       @id @default(autoincrement())
+  eventName  String    @db.VarChar(255)
+  eventDate  DateTime
+  status     String    @default("pending") @db.VarChar(50)
+  placeId    Int
+  place      Place     @relation(fields: [placeId], references: [id])
+  userName   String    @db.VarChar(255)
+  userEmail  String    @db.VarChar(255)
+  guestCount Int
+  totalPrice Decimal   @db.Decimal(10, 2)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @default(now()) @updatedAt
+  userInfo   UserInfo? // Add this line to create bidirectional relation
 }
 
 model User {
@@ -34,15 +35,27 @@ model User {
 }
 
 model Place {
-  id          Int      @id @default(autoincrement())
-  name        String   @db.VarChar(255)
-  description String   @db.Text
-  image       String   @db.VarChar(255)
-  price       Decimal  @db.Decimal(10, 2)
-  location    String   @db.VarChar(255)
+  id          Int       @id @default(autoincrement())
+  name        String    @db.VarChar(255)
+  description String    @db.Text
+  image       String    @db.VarChar(255)
+  price       Decimal   @db.Decimal(10, 2)
+  location    String    @db.VarChar(255)
   capacity    Int
-  available   Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @default(now()) @updatedAt
+  available   Boolean   @default(true)
+  amenities   String?   @db.Text // Made optional with ?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
   bookings    Booking[]
+}
+
+model UserInfo {
+  id        Int      @id @default(autoincrement())
+  name      String   @db.VarChar(255)
+  email     String   @db.VarChar(255)
+  phone     String   @db.VarChar(20)
+  bookingId Int      @unique
+  booking   Booking  @relation(fields: [bookingId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

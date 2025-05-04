@@ -1,40 +1,25 @@
-import prisma from '@/lib/db'
+import { prisma } from './db'
 
-export async function getPlaceById(id: string) {
+export async function getPlaceById(id: string | number) {
+  if (!id) return null
+  
   try {
+    const placeId = typeof id === 'string' ? parseInt(id) : id
+    
+    if (isNaN(placeId)) return null
+
     const place = await prisma.place.findUnique({
       where: {
-        id: parseInt(id)
+        id: placeId
+      },
+      include: {
+        bookings: true
       }
     })
 
     if (!place) return null
-
-    // Transform database data to match our PlaceDetails interface
-    return {
-      ...place,
-      amenities: [
-        "Stage",
-        "Dance floor",
-        "Full-service bar",
-        "Catering kitchen",
-        "Coat check",
-        "Valet parking"
-      ],
-      vendor: {
-        name: "Luxury Events Inc.",
-        serviceType: "Full-service venue management",
-        contact: "Event Director",
-      },
-      contactInfo: {
-        email: "bookings@venue.com",
-        phone: "+1 (555) 123-4567",
-      },
-      timeInfo: {
-        eventTimings: "Available 8:00 AM - 1:00 AM",
-        availability: "Booking 3-18 months in advance recommended",
-      }
-    }
+    return place
+    
   } catch (error) {
     console.error('Error fetching place:', error)
     return null

@@ -120,6 +120,20 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
   Serializable: 'Serializable'
 });
 
+exports.Prisma.BookingScalarFieldEnum = {
+  id: 'id',
+  eventName: 'eventName',
+  eventDate: 'eventDate',
+  status: 'status',
+  placeId: 'placeId',
+  userName: 'userName',
+  userEmail: 'userEmail',
+  guestCount: 'guestCount',
+  totalPrice: 'totalPrice',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
   email: 'email',
@@ -143,16 +157,12 @@ exports.Prisma.PlaceScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
-exports.Prisma.BookingScalarFieldEnum = {
+exports.Prisma.UserInfoScalarFieldEnum = {
   id: 'id',
-  eventName: 'eventName',
-  eventDate: 'eventDate',
-  status: 'status',
-  placeId: 'placeId',
-  userName: 'userName',
-  userEmail: 'userEmail',
-  guestCount: 'guestCount',
-  totalPrice: 'totalPrice',
+  name: 'name',
+  email: 'email',
+  phone: 'phone',
+  bookingId: 'bookingId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -160,6 +170,13 @@ exports.Prisma.BookingScalarFieldEnum = {
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
+};
+
+exports.Prisma.BookingOrderByRelevanceFieldEnum = {
+  eventName: 'eventName',
+  status: 'status',
+  userName: 'userName',
+  userEmail: 'userEmail'
 };
 
 exports.Prisma.UserOrderByRelevanceFieldEnum = {
@@ -176,18 +193,18 @@ exports.Prisma.PlaceOrderByRelevanceFieldEnum = {
   location: 'location'
 };
 
-exports.Prisma.BookingOrderByRelevanceFieldEnum = {
-  eventName: 'eventName',
-  status: 'status',
-  userName: 'userName',
-  userEmail: 'userEmail'
+exports.Prisma.UserInfoOrderByRelevanceFieldEnum = {
+  name: 'name',
+  email: 'email',
+  phone: 'phone'
 };
 
 
 exports.Prisma.ModelName = {
+  Booking: 'Booking',
   User: 'User',
   Place: 'Place',
-  Booking: 'Booking'
+  UserInfo: 'UserInfo'
 };
 
 /**

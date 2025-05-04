@@ -23,6 +23,7 @@ export default function DashboardLayout({
     { name: "Places to Visit", href: "/dashboard/places", icon: MapPin },
     { name: "Bookings", href: "/dashboard/bookings", icon: Calendar },
     { name: "Contact", href: "/dashboard/contact", icon: MessageSquare },
+    { name: "My Bookings", href: "/dashboard/my-bookings", icon: Calendar }
   ]
 
   return (
